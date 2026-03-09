@@ -1,6 +1,6 @@
-import type { MatrixClient } from "@vector-im/matrix-bot-sdk";
 import type { PluginRuntime, RuntimeEnv, RuntimeLogger } from "openclaw/plugin-sdk/matrix";
 import { describe, expect, it, vi } from "vitest";
+import type { MatrixClient } from "../sdk.js";
 import { createMatrixRoomMessageHandler } from "./handler.js";
 import { EventType, type MatrixRawEvent } from "./types.js";
 
@@ -103,7 +103,7 @@ describe("createMatrixRoomMessageHandler BodyForAgent sender label", () => {
         altAliases: [],
       }),
       getMemberDisplayName: vi.fn().mockResolvedValue("Bu"),
-      accountId: undefined,
+      accountId: "default",
     });
 
     const event = {
