@@ -1,9 +1,9 @@
+import type { AllowlistMatch } from "../channels/allowlist-match.js";
 import {
   firstDefined,
   isSenderIdAllowed,
   mergeDmAllowFromSources,
 } from "../channels/allow-from.js";
-import type { AllowlistMatch } from "../channels/allowlist-match.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 
 export type NormalizedAllowFrom = {
@@ -44,11 +44,12 @@ export const normalizeAllowFrom = (list?: Array<string | number>): NormalizedAll
   const normalized = entries
     .filter((value) => value !== "*")
     .map((value) => value.replace(/^(telegram|tg):/i, ""));
-  const invalidEntries = normalized.filter((value) => !/^\d+$/.test(value));
+  // Telegram supergroup/group IDs are always negative integers; allow leading minus.
+  const invalidEntries = normalized.filter((value) => !/^-?\d+$/.test(value));
   if (invalidEntries.length > 0) {
     warnInvalidAllowFromEntries([...new Set(invalidEntries)]);
   }
-  const ids = normalized.filter((value) => /^\d+$/.test(value));
+  const ids = normalized.filter((value) => /^-?\d+$/.test(value));
   return {
     entries: ids,
     hasWildcard,
